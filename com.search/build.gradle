@@ -1,0 +1,15 @@
+group 'com.search'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.postgresql', name: 'postgresql', version: '9.4-1200-jdbc41'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.4'
+}
