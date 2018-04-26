@@ -1,1 +1,1 @@
-# search-for-simular-string
+# search-for-similar-string
