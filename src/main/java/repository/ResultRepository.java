@@ -15,10 +15,10 @@ public class ResultRepository {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement;
             statement = connection.prepareStatement(
-                    "INSERT INTO results (calculations, name, feature, product_id) VALUES (?::JSON, ?, ?, ?)",
+                    "INSERT INTO results (report, name, feature, product_id) VALUES (?::JSON, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
-            statement.setString(1, result.getCalculations().toJSONString());
+            statement.setString(1, result.getReport().toJSONString());
             statement.setString(2, result.getName());
             statement.setString(3, result.getFeature());
             statement.setInt(4, result.getProductId());

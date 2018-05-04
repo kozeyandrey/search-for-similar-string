@@ -4,7 +4,7 @@ import org.json.simple.JSONObject;
 
 public class Result {
     private Integer id;
-    private JSONObject calculations;
+    private JSONObject report;
     private String name;
     private String feature;
     private Integer productId;
@@ -17,12 +17,12 @@ public class Result {
         this.id = id;
     }
 
-    public JSONObject getCalculations() {
-        return calculations;
+    public JSONObject getReport() {
+        return report;
     }
 
-    public void setCalculations(JSONObject calculations) {
-        this.calculations = calculations;
+    public void setReport(JSONObject report) {
+        this.report = report;
     }
 
     public String getName() {
