@@ -7,6 +7,7 @@ import repository.ProductRepository;
 import repository.ResultRepository;
 import service.Search;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -22,15 +23,15 @@ public class Main {
         ResultRepository resultRepository = new ResultRepository(dataSource);
 
         List<Product> products = productRepository.getUnchecked();
+        List<Result> results = new ArrayList<>();
 
         for (Product product : products) {
             Search search = new Search(product);
-            Result result = search.getResult();
-            resultRepository.create(result);
-
-            //TODO: Add batch
+            results.add(search.getResult());
             product.setChecked(true);
-            productRepository.update(product);
         }
+
+        resultRepository.create(results);
+        productRepository.update(products);
     }
 }

@@ -18,8 +18,9 @@ public class ProductRepository {
 
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
-            ResultSet rs = statement
-                    .executeQuery("SELECT id, names, checked FROM products WHERE checked = false");
+            ResultSet rs = statement.executeQuery(
+                    "SELECT id, names, checked FROM products WHERE checked = false"
+            );
 
             while (rs.next()) {
                 Product product = createObject(rs);
@@ -32,21 +33,28 @@ public class ProductRepository {
         return products;
     }
 
-    public Product update(Product product) throws SQLException {
+    public List<Product> update(List<Product> products) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement statement;
-            statement = connection.prepareStatement(
-                    "UPDATE products SET names = ?, checked = ? WHERE id = ?");
+            connection.setAutoCommit(false);
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE products SET names = ?, checked = ? WHERE id = ?"
+            );
 
-            statement.setArray(1, connection.createArrayOf("text", product.getNames()));
-            statement.setBoolean(2, product.getChecked());
-            statement.setInt(3, product.getId());
-            statement.execute();
+            for (Product product : products) {
+                statement.setArray(1, connection.createArrayOf("text", product.getNames()));
+                statement.setBoolean(2, product.getChecked());
+                statement.setInt(3, product.getId());
+                statement.addBatch();
+            }
+
+            statement.executeBatch();
+            connection.commit();
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
 
-        return product;
+        return products;
     }
 
     private Product createObject(ResultSet rs) throws SQLException {
