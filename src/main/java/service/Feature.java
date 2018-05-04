@@ -42,7 +42,7 @@ public class Feature {
             features.putAll(getAll());
         }
 
-        Double feature = Collections.max(features.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
+        double feature = Collections.max(features.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
 
         if (feature % 1 == 0) {
             featurePattern = Pattern.compile(decimalFormat.format(feature) + "+\\D?[a-zA-Z]+");
