@@ -1,25 +1,29 @@
 package service;
 
+import entity.Calculation;
+import entity.IntermediateCalculation;
 import entity.Product;
 import entity.Result;
 import org.json.simple.JSONObject;
+import java.util.HashMap;
 
 public class Search {
-    private final JaroWinkler similarity;
+    private final JaroWinkler jaroWinkler;
     private final Feature feature;
     private final Product product;
-    private String resultName;
 
     public Search(Product product) {
-        this.similarity = new JaroWinkler();
+        this.jaroWinkler = new JaroWinkler();
         this.product = product;
         this.feature = new Feature(product);
     }
 
     public Result getResult() {
+        Calculation calculation = getCalculation();
+
         Result result = new Result();
-        result.setReport(getReport());
-        result.setName(resultName);
+        result.setReport(calculation.getReport());
+        result.setName(calculation.getName());
 
         if (!feature.getAll().isEmpty()) {
             result.setFeature(feature.getFirst());
@@ -30,26 +34,61 @@ public class Search {
         return result;
     }
 
-    private JSONObject getReport() {
+    private Calculation getCalculation() {
         JSONObject report = new JSONObject();
-        double max = 0;
+        HashMap<String, Double> intermediateResult = new HashMap<>();
+        for (String s : product.getNames()) {
+            intermediateResult.put(s, 0.0);
+        }
 
-        for (int i = 0; i < product.getNames().length; i++) {
-            String current = product.getNames()[i];
+        for (int i = 1; intermediateResult.size() > 2; i++) {
+            IntermediateCalculation intermediateCalculation = getIntermediateCalculation(intermediateResult);
+            intermediateResult = intermediateCalculation.getResult();
+            report.put("Stage " + i, intermediateCalculation.getReport());
 
-            for (int n = i + 1; n < product.getNames().length; n++) {
-                String next = product.getNames()[n];
-                double calculation = similarity.similarity(current, next);
+            double totalForAll = intermediateResult.values().stream()
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
+            double mediumForAll = totalForAll / intermediateResult.size();
+            intermediateResult.values().removeIf(value -> value <= mediumForAll);
+        }
 
-                if (calculation != 1 && calculation > max) {
-                    max = calculation;
-                    resultName = current;
+        return new Calculation(report, intermediateResult);
+    }
+
+    private IntermediateCalculation getIntermediateCalculation(HashMap<String, Double> calculations) {
+        JSONObject report = new JSONObject();
+        for (String current : calculations.keySet()) {
+            JSONObject intermediateReport = new JSONObject();
+            double totalForWord = 0;
+            int fail = 0;
+
+            for (String next : calculations.keySet()) {
+                double result = jaroWinkler.similarity(current, next);
+
+                if (result != 1) {
+                    intermediateReport.put(next, result);
+
+                    if (fail < calculations.size() / 2) {
+                        if (result > 0.65) {
+                            totalForWord += result;
+                        } else {
+                            fail += 1;
+                        }
+                    } else {
+                        break;
+                    }
                 }
+            }
 
-                report.put(current, calculation);
+            report.put(current, intermediateReport);
+
+            if (fail < calculations.size() / 2) {
+                double mediumForWord = totalForWord / (calculations.size() - fail - 1);
+                calculations.replace(current, mediumForWord);
             }
         }
 
-        return report;
+        return new IntermediateCalculation(report, calculations);
     }
 }
