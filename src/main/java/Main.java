@@ -24,7 +24,6 @@ public class Main {
 
         List<Product> products = productRepository.getUnchecked();
         List<Result> results = new ArrayList<>();
-
         for (Product product : products) {
             Search search = new Search(product);
             results.add(search.getResult());
