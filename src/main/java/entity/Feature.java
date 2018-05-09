@@ -1,6 +1,5 @@
-package service;
+package entity;
 
-import entity.Product;
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,18 +11,17 @@ import java.util.regex.Pattern;
 public class Feature {
     private final DecimalFormat decimalFormat;
     private final Product product;
-    private final HashMap<Double, Integer> features;
     private Pattern featurePattern;
 
     public Feature(Product product) {
         this.product = product;
         this.decimalFormat = new DecimalFormat("0.#");
-        this.features = new HashMap<>();
     }
 
     public HashMap<Double, Integer> getAll() {
         featurePattern = Pattern.compile("\\d*[.]\\d+|\\d+");
 
+        HashMap<Double, Integer> features = new HashMap<>();
         for (String name : product.getNames()) {
             Matcher matcher = featurePattern.matcher(name);
 
@@ -36,12 +34,7 @@ public class Feature {
     }
 
     public String getFirst() {
-        String result = null;
-
-        if (features.isEmpty()) {
-            features.putAll(getAll());
-        }
-
+        HashMap<Double, Integer> features = getAll();
         double feature = Collections.max(features.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
 
         if (feature % 1 == 0) {
@@ -50,6 +43,7 @@ public class Feature {
             featurePattern = Pattern.compile(feature + "+\\D?[a-zA-Z]+");
         }
 
+        String result = null;
         for (String name : product.getNames()) {
             Matcher matcher = featurePattern.matcher(name);
 

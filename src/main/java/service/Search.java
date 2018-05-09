@@ -1,9 +1,6 @@
 package service;
 
-import entity.Calculation;
-import entity.IntermediateCalculation;
-import entity.Product;
-import entity.Result;
+import entity.*;
 import org.json.simple.JSONObject;
 import java.util.HashMap;
 
