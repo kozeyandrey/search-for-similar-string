@@ -23,7 +23,7 @@ public class Search {
         result.setName(calculation.getName());
 
         if (!feature.getAll().isEmpty()) {
-            result.setFeature(feature.getFirst());
+            result.setFeature(feature.getMostPopular());
         }
 
         result.setProductId(product.getId());

@@ -33,7 +33,7 @@ public class Feature {
         return features;
     }
 
-    public String getFirst() {
+    public String getMostPopular() {
         HashMap<Double, Integer> features = getAll();
         double feature = Collections.max(features.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
 
