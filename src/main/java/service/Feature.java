@@ -1,5 +1,6 @@
-package entity;
+package service;
 
+import entity.Product;
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.Comparator;
