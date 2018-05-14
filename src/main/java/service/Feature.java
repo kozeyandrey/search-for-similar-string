@@ -25,7 +25,6 @@ public class Feature {
         HashMap<Double, Integer> features = new HashMap<>();
         for (String name : product.getNames()) {
             Matcher matcher = featurePattern.matcher(name);
-
             while (matcher.find()) {
                 features.merge(Double.valueOf(matcher.group()), 1, Integer::sum);
             }
@@ -47,7 +46,6 @@ public class Feature {
         String result = null;
         for (String name : product.getNames()) {
             Matcher matcher = featurePattern.matcher(name);
-
             if (matcher.find()) {
                 result = matcher.group();
                 break;
